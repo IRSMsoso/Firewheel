@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+use std::collections::HashMap;
 use clack_extensions::audio_ports::{HostAudioPorts, HostAudioPortsImpl, RescanType};
 use clack_extensions::log::{HostLog, HostLogImpl, LogSeverity};
 use clack_host::entry::PluginEntryError;
@@ -10,7 +12,33 @@ use firewheel_core::node::{
 };
 use log::{debug, error, info, warn};
 use std::ffi::{CString, NulError};
+use lazy_static::lazy_static;
 use thiserror::Error;
+use threadbound::ThreadBound;
+
+struct ClapPluginRegistry {
+    plugins: HashMap<String, PluginInstance<FirewheelClapHost>>
+}
+
+impl ClapPluginRegistry {
+    fn new() -> Self {
+        Self {
+            plugins: HashMap::new(),
+        }
+    }
+
+    fn retrieve_plugin(&mut self, id: impl AsRef<str>) -> Option<&mut PluginInstance<FirewheelClapHost>> {
+        self.plugins.get_mut(id)
+    }
+
+    // etc
+}
+
+lazy_static! {
+    static ref CLAP_PLUGIN_REGISTRY: ThreadBound<RefCell<ClapPluginRegistry>> = {
+        ThreadBound::new(RefCell::new(ClapPluginRegistry::new()))
+    };
+}
 
 /// Information about this host.
 fn host_info() -> HostInfo {

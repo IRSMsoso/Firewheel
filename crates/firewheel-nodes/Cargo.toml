@@ -119,3 +119,5 @@ clack-host = { git = "https://github.com/prokopyl/clack", rev = "f53f8fc132c001a
 clack-extensions = { git = "https://github.com/prokopyl/clack", rev = "f53f8fc132c001a332c0a7221267812dfb654e92", optional = true, features = ["log", "clack-host", "audio-ports"]}
 log.workspace = true
 thiserror.workspace = true
+lazy_static = "1.5.0"
+threadbound = "0.1.8"
